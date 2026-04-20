@@ -11,12 +11,6 @@ public class BSTreeNode<E>
 		this.left= null;
 		this.right = null;
 	}
-
-    public BSTreeNode(E e, BSTreeNode<E> left, BSTreeNode<E> right) {
-        this.element = e;
-        this.left = left;
-        this.right = right;
-    }
 	
 	/**
 	 * @return the element

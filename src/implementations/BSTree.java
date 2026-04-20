@@ -101,21 +101,20 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
 	
 	public boolean recursiveAdd(BSTreeNode<E> root, E entry) {
 		int comparision = entry.compareTo(root.getElement());
-		if(comparision < 0) {
+		if(comparision <= 0) {
 			if(root.getLeft() == null) {
 				root.setLeft(new BSTreeNode<>(entry));
 				return true;
 			}
 			return recursiveAdd(root.getLeft(),entry);
 		}
-		else if (comparision > 0){
+		else {
 			if (root.getRight() == null) {
 				root.setRight(new BSTreeNode<>(entry));
 				return true;
 			}
 			return recursiveAdd(root.getRight(),entry);
 		}
-		return false;
 	}
 
 	@Override
@@ -132,8 +131,8 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
 
 	private BSTreeNode<E> recursiveRemoveMin(BSTreeNode<E> parent, BSTreeNode<E> current) {
 	    if (current.getLeft() == null) {
-	        // We found the minimum; connect parent to current's right child
 	        parent.setLeft(current.getRight());
+	        current.setLeft(null);
 	        return current;
 	    }
 	    return recursiveRemoveMin(current, current.getLeft());
@@ -142,20 +141,17 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
 	@Override
 	public BSTreeNode<E> removeMin() {
 		if (root == null) return null;
-		
 		if (root.getLeft() == null) {
 	        BSTreeNode<E> oldRoot = root;
 	        root = root.getRight();
 	        return oldRoot;
 	    }
-	    
 	    return recursiveRemoveMin(root, root.getLeft());
 	}
 
 	@Override
 	public BSTreeNode<E> removeMax() {
 		if (root == null) return null;
-	    // root is the maximum
 	    if (root.getRight() == null) {
 	        BSTreeNode<E> oldRoot = root;
 	        root = root.getLeft();
@@ -165,13 +161,13 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
 	    return recursiveRemoveMax(root, root.getRight());
 	}
 
-	private BSTreeNode<E> recursiveRemoveMax(BSTreeNode<E> parent, BSTreeNode<E> cur) {
-	    if (cur.getRight() == null) {
-	       
-	        parent.setRight(cur.getLeft());
-	        return cur;
+	private BSTreeNode<E> recursiveRemoveMax(BSTreeNode<E> parent, BSTreeNode<E> current) {
+	    if (current.getRight() == null) {
+	        parent.setRight(current.getLeft());
+	        current.setLeft(null);
+	        return current;
 	    }
-	    return recursiveRemoveMax(cur, cur.getRight());
+	    return recursiveRemoveMax(current, current.getRight());
 	}
 
 	@Override
@@ -197,9 +193,7 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
 			}
 			@Override
 			public E next() {
-				if(!hasNext()) {
-					return null;
-				}
+				if(!hasNext()) throw new NoSuchElementException();
 				// The top of the stack is the next in-order node
 	            BSTreeNode<E> node = travStack.pop();
 	            E result = node.getElement();
@@ -233,9 +227,8 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
 			
 			@Override
 			public E next() {
-				if(!hasNext()) {
-					throw new NoSuchElementException();
-				}
+				if(!hasNext()) throw new NoSuchElementException();
+				
 				BSTreeNode<E> node = travStack.pop();
 				E result = node.getElement();
 				
@@ -262,6 +255,7 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
 			}
 			@Override
 	        public E next() {
+				if (!hasNext()) throw new NoSuchElementException();
 	            while (hasNext()) {
 	                if (cur != null) {
 	                    travStack.push(cur);
@@ -278,9 +272,8 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
 	                    }
 	                }
 	            }
-	            throw new NoSuchElementException();
+				throw new NoSuchElementException();
 	        }
-	   
 		};	
 	}
 }
