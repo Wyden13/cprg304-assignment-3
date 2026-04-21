@@ -1,9 +1,6 @@
 package implementations;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
 
 public class BSTreeNode<E> implements Serializable
 {

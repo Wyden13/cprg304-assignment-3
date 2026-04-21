@@ -29,15 +29,15 @@ public class WordTracker {
 
     public static void main(String[] args) {
 
-        // ── 1. Parse command-line arguments ────────────────────────────────
+        // 1. Parse command-line arguments
         if (args.length < 2) {
             System.err.println("Usage: java -jar WordTracker.jar <input.txt> -pf/-pl/-po [-f<output.txt>]");
             System.exit(1);
         }
 
         String inputFilePath = args[0];
-        String printOption   = args[1];
-        String outputFile    = null;
+        String printOption = args[1];
+        String outputFile = null;
 
         if (args.length >= 3 && args[2].startsWith("-f")) {
         	// skip the f prefix
@@ -64,18 +64,21 @@ public class WordTracker {
 
         String fileName = inputFile.getName();
 
+        // check and skip a file if already processed
         if (fileAlreadyProcessed(wordTree, fileName)) {
             System.out.println("File '" + fileName + "' was already processed; skipping ingestion.");
         } else {
+        	// process the next input file
             try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
                 String line;
                 int lineNumber = 1;
-
                 while ((line = br.readLine()) != null) {
                     String[] tokens = line.split("\\s+");
                     for (String token : tokens) {
+                    	// removes special characters
                         String cleaned = processWord(token);
                         if (!cleaned.isEmpty()) {
+                        	// insert cleaned word into wordTree along with filename and line number
                             insertWord(wordTree, cleaned, fileName, lineNumber);
                         }
                     }
@@ -119,7 +122,7 @@ public class WordTracker {
     // Helpers
 
     /**
-     * Strip non-alphanumeric characters (except hyphens) and lowercase the word.
+     * Strip non-alphanumeric characters and lowercase the word.
      */
     public static String processWord(String word) {
         return word.replaceAll("[^a-zA-Z0-9-]", "");
@@ -137,10 +140,10 @@ public class WordTracker {
         BSTreeNode<WordEntry> existing = tree.search(probe);
 
         if (existing != null) {
-            // Word already in tree — add this file/line to its existing entry
+            // Word already in tree-add this file/line to its existing entry
             existing.getElement().addOccurrence(fileName, lineNumber);
         } else {
-            // New word — create entry and insert
+            // New word-create entry and insert
             WordEntry newEntry = new WordEntry(word);
             newEntry.addOccurrence(fileName, lineNumber);
             tree.add(newEntry);
@@ -155,7 +158,7 @@ public class WordTracker {
         switch (option) {
             case "-pf":
                 out.println("Displaying -pf format");
-                break;
+                break;	
             case "-pl":
                 out.println("Displaying -pl format");
                 break;
@@ -172,7 +175,7 @@ public class WordTracker {
 
             switch (option) {
                 case "-pf":
-                    // Just filenames
+                    // just filenames
                     sb.append("found in file: ");
                     sb.append(String.join(", ", entry.getOccurrences().keySet()));
                     break;
@@ -192,7 +195,7 @@ public class WordTracker {
                     break;
 
                 case "-po":
-                    // Filenames + line numbers + frequency
+                    // filenames + line numbers + frequency
                     sb.append("number of entries: ").append(entry.getTotalCount()).append(" ");
                     for (Map.Entry<String, ArrayList<Integer>> e : entry.getOccurrences().entrySet()) {
                         sb.append("found in file: ").append(e.getKey());
@@ -210,7 +213,7 @@ public class WordTracker {
         }
     }
 
-    /** Format a list of line numbers as "1,2,3," (matching sample output style) */
+    /** Format a list of line numbers */
     private static String formatLines(ArrayList<Integer> lines) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < lines.size(); i++) {
@@ -225,11 +228,8 @@ public class WordTracker {
     /**
      * Walk the tree with an inorder iterator and check if any node's
      * occurrences map already contains the given filename.
-     * No Set needed — the BST itself is the source of truth.
      */
     private static boolean fileAlreadyProcessed(BSTree<WordEntry> tree, String fileName) {
-        // Every word shares the same set of filenames, so checking any single
-        // node is sufficient — we use the root as it requires no traversal.
         if (tree.isEmpty()) return false;
         return tree.getRoot().getElement().getOccurrences().containsKey(fileName);
     }

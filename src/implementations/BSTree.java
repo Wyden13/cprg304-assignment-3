@@ -1,9 +1,6 @@
 package implementations;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.NoSuchElementException;
-import java.util.ArrayList;
 
 import utilities.BSTreeADT;
 import utilities.Iterator;
@@ -247,6 +244,7 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>, Se
 
 	@Override
 	public Iterator<E> postorderIterator() {
+		// left -> right -> node
 		return new Iterator<E>() {
 			BSTreeNode<E> cur = root;
 			BSTreeNode<E> lastVisited = null;
