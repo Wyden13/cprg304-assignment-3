@@ -1,12 +1,13 @@
 package appDomain;
 
 import implementations.BSTree;
-import implementations.BSTreeNode;
 import utilities.Iterator;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
+import static appDomain.WordHelper.*;
+ 
 
 /**
  * WordTracker - Assignment 3
@@ -79,7 +80,8 @@ public class WordTracker {
                         String cleaned = processWord(token);
                         if (!cleaned.isEmpty()) {
                         	// insert cleaned word into wordTree along with filename and line number
-                            insertWord(wordTree, cleaned, fileName, lineNumber);
+                        	insertWord(wordTree, cleaned, fileName, lineNumber);
+                        
                         }
                     }
                     lineNumber++;
@@ -119,36 +121,6 @@ public class WordTracker {
         }
     }
 
-    // Helpers
-
-    /**
-     * Strip non-alphanumeric characters and lowercase the word.
-     */
-    public static String processWord(String word) {
-        return word.replaceAll("[^a-zA-Z0-9-]", "");
-    }
-
-    /**
-     * Insert a word+occurrence into the BST.
-     * If the word already exists, merge the new occurrence into the existing node.
-     * If it's new, create a fresh WordEntry node.
-     */
-    private static void insertWord(BSTree<WordEntry> tree, String word,
-                                   String fileName, int lineNumber) {
-        // Use a temporary probe entry to search
-        WordEntry probe = new WordEntry(word);
-        BSTreeNode<WordEntry> existing = tree.search(probe);
-
-        if (existing != null) {
-            // Word already in tree-add this file/line to its existing entry
-            existing.getElement().addOccurrence(fileName, lineNumber);
-        } else {
-            // New word-create entry and insert
-            WordEntry newEntry = new WordEntry(word);
-            newEntry.addOccurrence(fileName, lineNumber);
-            tree.add(newEntry);
-        }
-    }
 
     /**
      * Print the report using an inorder iterator (alphabetical order).
@@ -166,7 +138,7 @@ public class WordTracker {
                 out.println("Displaying -po format");
                 break;
         }
-
+        
         Iterator<WordEntry> it = tree.inorderIterator();
         while (it.hasNext()) {
             WordEntry entry = it.next();
@@ -213,27 +185,9 @@ public class WordTracker {
         }
     }
 
-    /** Format a list of line numbers */
-    private static String formatLines(ArrayList<Integer> lines) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < lines.size(); i++) {
-            sb.append(lines.get(i));
-            if (i < lines.size() - 1) sb.append(",");
-        }
-        return sb.toString();
-    }
-
     // Serialization
 
-    /**
-     * Walk the tree with an inorder iterator and check if any node's
-     * occurrences map already contains the given filename.
-     */
-    private static boolean fileAlreadyProcessed(BSTree<WordEntry> tree, String fileName) {
-        if (tree.isEmpty()) return false;
-        return tree.getRoot().getElement().getOccurrences().containsKey(fileName);
-    }
-
+ 
     @SuppressWarnings("unchecked")
     public static BSTree<WordEntry> deserializeTree() {
         File repo = new File(REPO_PATH);
