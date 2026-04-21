@@ -1,7 +1,13 @@
 package implementations;
 
-public class BSTreeNode<E>
+import java.io.Serializable;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+
+public class BSTreeNode<E> implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	private E element;
 	private BSTreeNode<E> left,right;
 

@@ -1,15 +1,19 @@
 package implementations;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
+import java.util.ArrayList;
 
 import utilities.BSTreeADT;
 import utilities.Iterator;
 import java.util.Stack;
+import java.io.Serializable;
  
 
-public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
+public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>, Serializable
 {
-	// attributes
+	private static final long serialVersionUID = 1L ;
 	private BSTreeNode<E> root;
 
     public BSTree(){
@@ -19,7 +23,7 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
     public BSTree(E element){
         this.root = new BSTreeNode<E>(element);
     }
-	
+  
 	@Override
 	public BSTreeNode<E> getRoot() throws NullPointerException {
 		if (root == null) throw new NullPointerException();
